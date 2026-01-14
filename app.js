@@ -140,6 +140,9 @@ export default class App {
             <span id="positionInfo">0 / 0</span>
           </div>
         </div>
+        <footer class="footer">
+          <a href="https://disobey.dev" target="_blank">© 2026 disobey.dev</a>
+        </footer>
       </div>
     `;
 
@@ -215,7 +218,6 @@ export default class App {
       <div class="landing">
         <div class="landing-header">
           <h1>Speed read any text. Choose a file or paste text to begin.</h1>
-          <button id="themeToggle" class="theme-toggle">🌙</button>
         </div>
         <textarea id="textInput" rows="10" placeholder="Paste your text here..."></textarea>
         <div class="input-controls">
@@ -224,7 +226,11 @@ export default class App {
             Choose File
           </label>
           <button id="startReading" disabled>Start Reading</button>
+          <button id="themeToggle" class="theme-toggle">🌙</button>
         </div>
+        <footer class="footer">
+          <a href="https://disobey.dev" target="_blank">© 2026 disobey.dev</a>
+        </footer>
       </div>
     `;
 
@@ -285,7 +291,6 @@ export default class App {
         <div class="landing">
           <div class="landing-header">
             <h1>Speed read any text. Choose a file or paste text to begin.</h1>
-            <button id="themeToggle" class="theme-toggle">🌙</button>
           </div>
           <textarea id="textInput" rows="10" placeholder="Paste your text here..."></textarea>
           <div class="input-controls">
@@ -294,7 +299,11 @@ export default class App {
               Choose File
             </label>
             <button id="startReading">Resume Reading</button>
+            <button id="themeToggle" class="theme-toggle">🌙</button>
           </div>
+          <footer class="footer">
+            <a href="https://disobey.dev" target="_blank">© 2026 disobey.dev</a>
+          </footer>
         </div>
       `;
       this.setupEventListeners();

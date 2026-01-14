@@ -19,6 +19,7 @@ export default class App {
     const textInput = document.getElementById('textInput');
     const fileInput = document.getElementById('fileInput');
     const startButton = document.getElementById('startReading');
+    const themeToggle = document.getElementById('themeToggle');
 
     if (textInput) {
       textInput.addEventListener('input', () => this.validateInput());
@@ -30,6 +31,11 @@ export default class App {
 
     if (startButton) {
       startButton.addEventListener('click', () => this.startReading());
+    }
+
+    if (themeToggle) {
+      themeToggle.addEventListener('click', () => this.toggleTheme());
+      this.updateThemeButton();
     }
   }
 
@@ -147,6 +153,7 @@ export default class App {
     const progressBar = document.getElementById('progressBar');
     const backButton = document.getElementById('backButton');
     const wordDisplay = document.getElementById('wordDisplay');
+    const themeToggle = document.getElementById('themeToggle');
 
     if (wpmSlider) {
       wpmSlider.addEventListener('input', (e) => {
@@ -189,6 +196,11 @@ export default class App {
       wordDisplay.addEventListener('click', () => {
         this.reader.toggle();
       });
+    }
+
+    if (themeToggle) {
+      themeToggle.addEventListener('click', () => this.toggleTheme());
+      this.updateThemeButton();
     }
 
     window.addEventListener('beforeunload', () => {
@@ -271,7 +283,10 @@ export default class App {
       const app = document.getElementById('app');
       app.innerHTML = `
         <div class="landing">
-          <h1>Speed read any text. Choose a file or paste text to begin.</h1>
+          <div class="landing-header">
+            <h1>Speed read any text. Choose a file or paste text to begin.</h1>
+            <button id="themeToggle" class="theme-toggle">🌙</button>
+          </div>
           <textarea id="textInput" rows="10" placeholder="Paste your text here..."></textarea>
           <div class="input-controls">
             <label class="file-picker">
@@ -285,6 +300,28 @@ export default class App {
       this.setupEventListeners();
       document.getElementById('textInput').value = this.reader.words.join(' ');
       this.validateInput();
+    }
+  }
+
+  toggleTheme() {
+    const currentTheme = document.body.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    document.body.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    this.updateThemeButton();
+  }
+
+  loadTheme() {
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.body.setAttribute('data-theme', savedTheme);
+    this.updateThemeButton();
+  }
+
+  updateThemeButton() {
+    const themeToggle = document.getElementById('themeToggle');
+    if (themeToggle) {
+      const currentTheme = document.body.getAttribute('data-theme');
+      themeToggle.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
     }
   }
 }

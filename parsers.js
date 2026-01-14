@@ -73,7 +73,7 @@ export default class Parsers {
     await new Promise((resolve) => jszipScript.onload = resolve);
 
     const epubScript = document.createElement('script');
-    epubScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/epub.js/0.3.93/epub.min.js';
+    epubScript.src = 'https://unpkg.com/epubjs@0.3.93/dist/epub.min.js';
     document.head.appendChild(epubScript);
     await new Promise((resolve) => epubScript.onload = resolve);
 

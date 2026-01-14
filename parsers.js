@@ -98,15 +98,20 @@ export default class Parsers {
     try {
       const arrayBuffer = await file.arrayBuffer();
       const book = window.ePub(arrayBuffer);
+      await book.ready;
       let fullText = '';
 
-      const sections = await book.loaded.spine.items;
-      const sectionsList = Object.values(sections);
-
-      for (const section of sectionsList) {
-        const text = await section.load(book.load.bind(book));
-        const sectionText = text.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
-        fullText += sectionText + ' ';
+      const sections = book.spine.spineItems;
+      for (const section of sections) {
+        const sectionObject = book.section(section.href);
+        if (sectionObject) {
+          const sectionUrl = sectionObject.href;
+          const text = await book.load(sectionUrl);
+          if (typeof text === 'string') {
+            const sectionText = text.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+            fullText += sectionText + ' ';
+          }
+        }
       }
 
       hideLoading();

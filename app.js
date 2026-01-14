@@ -312,7 +312,7 @@ export default class App {
   }
 
   loadTheme() {
-    const savedTheme = localStorage.getItem('theme') || 'light';
+    const savedTheme = localStorage.getItem('theme') || 'dark';
     document.body.setAttribute('data-theme', savedTheme);
     this.updateThemeButton();
   }

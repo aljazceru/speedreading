@@ -2,12 +2,14 @@ class Reader {
   constructor() {
     this.words = [];
     this.wpm = 300;
+    this.wordsPerGroup = 1;
     this.currentIndex = 0;
     this.isPlaying = false;
     this.rafId = null;
     this.onWordChange = null;
     this.onProgressChange = null;
     this.onPlayStateChange = null;
+    this.onComplete = null;
     this.lastWordTime = 0;
   }
 
@@ -18,8 +20,12 @@ class Reader {
     this.cancelAnimation();
   }
 
+  setWordsPerGroup(num) {
+    this.wordsPerGroup = Math.max(1, Math.min(5, num));
+  }
+
   play() {
-    if (this.isPlaying || this.currentIndex >= this.words.length) return;
+    if (this.isPlaying) return;
     this.isPlaying = true;
     this.lastWordTime = performance.now();
     this.notifyPlayState(true);
@@ -65,11 +71,12 @@ class Reader {
     const delay = 60000 / this.wpm;
 
     if (now - this.lastWordTime >= delay) {
-      this.currentIndex++;
+      this.currentIndex += this.wordsPerGroup;
       this.lastWordTime = now;
 
       if (this.currentIndex >= this.words.length) {
         this.pause();
+        if (this.onComplete) this.onComplete();
         return;
       }
 
@@ -82,7 +89,8 @@ class Reader {
 
   notifyWordChange() {
     if (this.onWordChange && this.currentIndex < this.words.length) {
-      this.onWordChange(this.words[this.currentIndex]);
+      const wordGroup = this.words.slice(this.currentIndex, this.currentIndex + this.wordsPerGroup);
+      this.onWordChange(wordGroup);
     }
   }
 
@@ -104,7 +112,8 @@ class Reader {
       const state = {
         text: this.words,
         position: this.currentIndex,
-        wpm: this.wpm
+        wpm: this.wpm,
+        wordsPerGroup: this.wordsPerGroup
       };
       localStorage.setItem('readingState', JSON.stringify(state));
     } catch (e) {
@@ -121,6 +130,9 @@ class Reader {
         this.currentIndex = typeof state.position === 'number' ? state.position : 0;
         if (typeof state.wpm === 'number') {
           this.wpm = Math.max(200, Math.min(1000, state.wpm));
+        }
+        if (typeof state.wordsPerGroup === 'number') {
+          this.wordsPerGroup = Math.max(1, Math.min(5, state.wordsPerGroup));
         }
         return true;
       }

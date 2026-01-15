@@ -201,6 +201,36 @@ html, body {
   font-weight: 600;
 }
 
+.words-per-group-control {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+  justify-content: center;
+}
+
+.words-per-group-control label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.words-per-group-control input[type="range"] {
+  width: 8rem;
+  min-width: 4rem;
+  flex: 1;
+  max-width: 12rem;
+  height: 2.75rem;
+  padding: 0.75rem 0;
+  cursor: pointer;
+}
+
+.words-per-group-control span {
+  min-width: 3rem;
+  text-align: center;
+  font-weight: 600;
+}
+
 .word-display {
   flex: 1;
   display: flex;
@@ -217,6 +247,12 @@ html, body {
   font-weight: 500;
   text-align: center;
   line-height: 1.2;
+  display: inline-block;
+  margin-right: 0.25em;
+}
+
+.word:last-child {
+  margin-right: 0;
 }
 
 .anchor {
@@ -283,6 +319,31 @@ html, body {
 
 .play-button:hover {
   background: var(--primary-hover);
+}
+
+.replay-button {
+  width: 4rem;
+  height: 4rem;
+  min-width: 3.5rem;
+  min-height: 3.5rem;
+  border-radius: 50%;
+  background: var(--button-bg);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  font-size: 1.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.replay-button:hover {
+  background: var(--button-hover);
+}
+
+.replay-button.hidden {
+  display: none;
 }
 
 .position-info {
@@ -352,6 +413,10 @@ html, body {
   }
 
   .wpm-control input[type="range"] {
+    width: 9.375rem;
+  }
+
+  .words-per-group-control input[type="range"] {
     width: 9.375rem;
   }
 

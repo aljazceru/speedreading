@@ -40,9 +40,10 @@ export default class App {
   }
 
   setupReaderCallbacks() {
-    this.reader.onWordChange = (word) => this.displayWord(word);
+    this.reader.onWordChange = (wordGroup) => this.displayWord(wordGroup);
     this.reader.onProgressChange = (percent, current, total) => this.updateProgress(percent, current, total);
     this.reader.onPlayStateChange = (isPlaying) => this.updatePlayButton(isPlaying);
+    this.reader.onComplete = () => this.showReplayButton();
   }
 
   validateInput() {
@@ -121,6 +122,11 @@ export default class App {
             <input type="range" id="wpmSlider" min="200" max="1000" value="300" step="10">
             <span id="wpmValue">300</span>
           </div>
+          <div class="words-per-group-control">
+            <label for="wordsPerGroupSlider">Words</label>
+            <input type="range" id="wordsPerGroupSlider" min="1" max="5" value="1" step="1">
+            <span id="wordsPerGroupValue">1</span>
+          </div>
           <button id="themeToggle" class="theme-toggle">🌙</button>
         </div>
 
@@ -135,6 +141,7 @@ export default class App {
           </div>
           <div class="playback-controls">
             <button id="playPauseButton" class="play-button">▶</button>
+            <button id="replayButton" class="replay-button hidden">↺</button>
           </div>
           <div class="position-info">
             <span id="positionInfo">0 / 0</span>
@@ -152,7 +159,10 @@ export default class App {
   setupReadingInterfaceControls() {
     const wpmSlider = document.getElementById('wpmSlider');
     const wpmValue = document.getElementById('wpmValue');
+    const wordsPerGroupSlider = document.getElementById('wordsPerGroupSlider');
+    const wordsPerGroupValue = document.getElementById('wordsPerGroupValue');
     const playPauseButton = document.getElementById('playPauseButton');
+    const replayButton = document.getElementById('replayButton');
     const progressBar = document.getElementById('progressBar');
     const backButton = document.getElementById('backButton');
     const wordDisplay = document.getElementById('wordDisplay');
@@ -173,9 +183,32 @@ export default class App {
       }
     }
 
+    if (wordsPerGroupSlider) {
+      wordsPerGroupSlider.addEventListener('input', (e) => {
+        const wordsPerGroup = parseInt(e.target.value);
+        this.reader.setWordsPerGroup(wordsPerGroup);
+        if (wordsPerGroupValue) {
+          wordsPerGroupValue.textContent = wordsPerGroup;
+        }
+      });
+
+      wordsPerGroupSlider.value = this.reader.wordsPerGroup;
+      if (wordsPerGroupValue) {
+        wordsPerGroupValue.textContent = this.reader.wordsPerGroup;
+      }
+    }
+
     if (playPauseButton) {
       playPauseButton.addEventListener('click', () => {
         this.reader.toggle();
+      });
+    }
+
+    if (replayButton) {
+      replayButton.addEventListener('click', () => {
+        this.reader.currentIndex = 0;
+        replayButton.classList.add('hidden');
+        this.reader.play();
       });
     }
 
@@ -246,20 +279,22 @@ export default class App {
     }
   }
 
-  displayWord(word) {
+  displayWord(wordGroup) {
     const wordDisplay = document.getElementById('wordDisplay');
     if (wordDisplay) {
-      const middleIndex = Math.floor(word.length / 2);
-      const beforeMiddle = word.substring(0, middleIndex);
-      const middleChar = word[middleIndex] || '';
-      const afterMiddle = word.substring(middleIndex + 1);
+      const wordsHtml = wordGroup.map(word => {
+        const middleIndex = Math.floor(word.length / 2);
+        const beforeMiddle = word.substring(0, middleIndex);
+        const middleChar = word[middleIndex] || '';
+        const afterMiddle = word.substring(middleIndex + 1);
 
-      const offset = (middleIndex - (word.length - 1) / 2) * 0.6;
-      const transform = `translateX(${offset}em)`;
+        const offset = (middleIndex - (word.length - 1) / 2) * 0.6;
+        const transform = `translateX(${offset}em)`;
 
-      wordDisplay.innerHTML = `
-        <span class="word" style="transform: ${transform}">${beforeMiddle}<span class="anchor">${middleChar}</span>${afterMiddle}</span>
-      `;
+        return `<span class="word" style="transform: ${transform}">${beforeMiddle}<span class="anchor">${middleChar}</span>${afterMiddle}</span>`;
+      }).join(' ');
+
+      wordDisplay.innerHTML = wordsHtml;
     }
   }
 
@@ -280,6 +315,13 @@ export default class App {
     const playPauseButton = document.getElementById('playPauseButton');
     if (playPauseButton) {
       playPauseButton.textContent = isPlaying ? '⏸' : '▶';
+    }
+  }
+
+  showReplayButton() {
+    const replayButton = document.getElementById('replayButton');
+    if (replayButton) {
+      replayButton.classList.remove('hidden');
     }
   }
 
